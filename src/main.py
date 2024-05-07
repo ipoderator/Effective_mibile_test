@@ -135,7 +135,7 @@ def add_record(file_name: Any):
 @click.argument('file_name', default='transaction.csv')
 def edit_record(file_name: Any):
     """
-    Отредактировать существующую запись по индексу. 
+    Отредактировать существующую запись по индексу.
     """
     try:
         index = click.prompt(
