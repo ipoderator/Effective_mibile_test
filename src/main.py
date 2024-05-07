@@ -12,6 +12,7 @@ from constants import (
     SEACH_CATEGORY, LIST_OF_CRITERIA
 )
 
+# Конфиг loguru
 logger.add(sys.stderr, format='{time} {level} {message}',
            filter='my_module', level='INFO')
 logger.add('logs/logs.log', level='DEBUG')
@@ -19,7 +20,10 @@ logger.add('logs/logs.log', level='DEBUG')
 
 def write_data(file_name: Any, data: list, writer_type: str):
     """
-    Добавляет данные в файл
+    Записывает данные в файл CSV.
+    file_name: имя файла для записи.
+    Если падает в ошибку то перехватывает и логирует ее.:
+    raise ValueError: если указанный режим не «w» или «a».
     """
     with open(file_name, writer_type, newline='', encoding='utf-8') as csvfile:
         columns = LIST_OF_CRITERIA
@@ -41,7 +45,7 @@ def wallet():
 @wallet.command()
 def view_balance():
     """
-    Вывод баланса,доходов и расходов
+    Просмотр баланса, доходов и расходов
     """
     try:
         total_income = sum(
@@ -57,8 +61,8 @@ def view_balance():
                    f'Доходы: {total_income}\n'
                    f'Расходы: {total_expense}')
         logger.info('Все хорошо, функция отработала успешно!')
-    except Exception:
-        logger.exception('Неизвестная ошибка, повторите попытку!')
+    except Exception as e:
+        logger.exception(f'Неизвестная ошибка: {e}, повторите попытку!')
 
 
 @wallet.command()
@@ -79,7 +83,7 @@ def search_record():
         click.echo('Найденные записи:')
         for record in found_records:
             click.echo(record)
-            logger.info('Все прошло успешно, запись найдена!')
+        logger.info('Все прошло успешно, запись найдена!')
     else:
         click.echo('Записи не найдены.')
         logger.debug('Что-то пошло не так, записи не найдены!')
@@ -90,6 +94,7 @@ def search_record():
 def add_record(file_name: Any):
     """
     Принимает данные от пользователя:
+
     - Дату высталяет автоматически
     - Выбор Доход или Расход
     - Сумма Дохода или Расхода
@@ -109,7 +114,7 @@ def add_record(file_name: Any):
             MIN_1 += 1
             if MIN_1 == MAX:
                 raise
-            logger.exception('Произошла ошибка. Введите число!')
+            logger.error('Произошла ошибка. Введите число!')
             time.sleep(1)
     description = input('Краткое описание: ').strip()
     new_record = {
@@ -130,14 +135,14 @@ def add_record(file_name: Any):
 @click.argument('file_name', default='transaction.csv')
 def edit_record(file_name: Any):
     """
-    Изменение записей.
+    Отредактировать существующую запись по индексу. 
     """
     try:
         index = click.prompt(
             'Введите индекс записи для редактирования: ', type=int
         )
         if 0 <= index < len(transaction_data):
-            click.echo('Текущая запись: {}'.format(transaction_data[index]))
+            click.echo(f'Текущая запись: {transaction_data[index]}')
             field_choice = click.prompt(
                 ENTER_FIELD_EDIT, type=click.Choice(LIST_OF_CRITERIA)
             )
@@ -154,7 +159,7 @@ def edit_record(file_name: Any):
             logger.debug('Записи не найдены!')
             time.sleep(1)
     except click.Abort:
-        logger.exception('Введите число!')
+        logger.exception('Не правильный ввод. Введите число!')
 
 
 if __name__ == '__main__':
