@@ -78,7 +78,6 @@ def search_record():
         )
     found_records = [record for record in transaction_data
                      if record[criterion_choice] == category]
-
     if found_records:
         click.echo('Найденные записи:')
         for record in found_records:
