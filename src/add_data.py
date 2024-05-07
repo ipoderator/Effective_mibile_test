@@ -11,7 +11,7 @@ logger.add(sys.stderr, format="{level} {message}",
 
 def read_file(file_name: Any) -> list:
     """
-        Считывает данные из файла CSV и возвращает список словарей.
+    Считывает данные из файла CSV и возвращает список словарей.
     """
     try:
         with open(file_name, 'r', newline='', encoding='utf-8') as file:
