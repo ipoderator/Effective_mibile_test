@@ -28,7 +28,7 @@
 
 Клонировать репозиторий:
 ```
-git clone git@github.com:ipoderator/api_yamdb.git
+git@github.com:ipoderator/Effective_mibile_test.git
 ```
 Активировать виртуальное окружние:
 ```
