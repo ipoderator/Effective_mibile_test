@@ -165,5 +165,25 @@ def edit_record(file_name: Any):
         logger.exception('Не правильный ввод. Введите число!')
 
 
+@wallet.command
+@click.argument('file_name', default='transaction.csv')
+def delete_record(file_name: Any):
+    """
+    Удалить запись по индексу.
+    """
+    index = click.prompt(
+        'Введите индекс записи для удаления: ', type=int
+    )
+    if 0 <= index < len(transaction_data):
+        del transaction_data[index]
+        write_data(file_name, transaction_data, writer_type='w')
+        click.echo('Запись успешно удалена!')
+        logger.info('Функция удаление записи отработала успешно')
+    else:
+        click.echo('Такой записи нет!')
+        logger.debug('Записи не найдены!')
+        time.sleep(1)
+
+
 if __name__ == '__main__':
     wallet()
