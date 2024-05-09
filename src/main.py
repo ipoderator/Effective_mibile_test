@@ -90,7 +90,7 @@ def search_record():
 
 @wallet.command()
 @click.argument('file_name', default='transaction.csv')
-def add_record(file_name: Any):
+def add_record(file_name: str):
     """
     Принимает данные от пользователя:
 
@@ -104,17 +104,21 @@ def add_record(file_name: Any):
     category_choice = click.prompt(
         'Введите категорию: ', type=click.Choice(['Доход', 'Расход'])
     )
-    while MIN < MAX:
-        MIN_1 = 0
+    while True:
+        COUNT: int = 0
         try:
             amount = int(input('Введите число: '))
-            break
+            if amount > 0:
+                break
+            else:
+                time.sleep(0.5)
+                logger.error('Пожалуйста, введите положительное число.')
         except ValueError:
-            MIN_1 += 1
-            if MIN_1 == MAX:
-                raise
-            logger.error('Произошла ошибка. Введите число!')
-            time.sleep(1)
+            if MIN >= MAX:
+                logger.error('Достигнуто максимальное количество попыток!')
+                return
+            logger.error('Пожалуйста, введите число.')
+            COUNT += 1
     description = input('Краткое описание: ').strip()
     new_record = {
         'Дата': formatted_date, 'Категория': category_choice.title(),
